@@ -1,6 +1,7 @@
 package post
 
-type PostDataStore interface {
+//Repository creates the actions for a database
+type Repository interface {
 	Create(Post *Post) error
 	FindByID(id string) (*Post, error)
 	FindAll() ([]*Post, error)

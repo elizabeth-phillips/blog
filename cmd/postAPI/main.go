@@ -16,11 +16,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const DefaultPostgresUrl = "postgresql://postgres@localhost/post?sslmode=disable"
+//DefaultPostgresURL creates a default Postgres URL if one is not provided
+const DefaultPostgresURL = "postgresql://postgres@localhost/post?sslmode=disable"
 
 func main() {
 	var dbURL string
-	var postRepo post.PostDataStore
+	var postRepo post.Repository
 
 	// --------- Credentials ---------
 	host := os.Getenv("BLOG_HOST")
@@ -35,11 +36,11 @@ func main() {
 	pconn, err := postgresConnection(dbURL)
 
 	if err != nil {
-		pconn, err = postgresConnection(DefaultPostgresUrl)
+		pconn, err = postgresConnection(DefaultPostgresURL)
 	}
 
 	defer pconn.Close()
-	postRepo = psql.NewPostgresPostDataStore(pconn)
+	postRepo = psql.NewPostgresRepository(pconn)
 
 	postService := post.NewService(postRepo)
 	postHandler := post.NewHandler(postService)

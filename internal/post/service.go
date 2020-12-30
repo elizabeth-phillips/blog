@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//Service creates the business logic that is a concrete implementation of how a service will interact with the PostDataStore methods
+//Service creates the business logic that is a concrete implementation of how a service will interact with the Repository methods
 type Service interface {
 	CreatePost(post *Post) error
 	FindPostByID(id string) (*Post, error)
@@ -16,11 +16,11 @@ type Service interface {
 }
 
 type postService struct {
-	dataStore PostDataStore
+	dataStore Repository
 }
 
 //NewService is a constructor for Service
-func NewService(dataStore PostDataStore) Service {
+func NewService(dataStore Repository) Service {
 	return &postService{
 		dataStore,
 	}

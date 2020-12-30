@@ -1,110 +1,79 @@
 package post_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/elizabeth-phillips/blog/internal/mocks"
 	"github.com/elizabeth-phillips/blog/internal/post"
 
-	"github.com/gorilla/mux"
-
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 )
 
-func TestPostHandlerSuite(t *testing.T) {
-	suite.Run(t, new(PostHandlerTestSuite))
+func TestPostServiceSuite(t *testing.T) {
+	suite.Run(t, new(PostServiceTestSuite))
 }
 
-type PostHandlerTestSuite struct {
+type PostServiceTestSuite struct {
 	suite.Suite
-	postService *mocks.MockService
-	underTest   post.Handler
+	postRepo  *mocks.MockRepository
+	underTest post.Service
 }
 
-func (suite *PostHandlerTestSuite) SetupTest() {
+func (suite *PostServiceTestSuite) SetupTest() {
 	mockCtrl := gomock.NewController(suite.T())
 	defer mockCtrl.Finish()
 
-	suite.postService = mocks.NewMockService(mockCtrl)
-	suite.underTest = post.NewHandler(suite.postService)
+	suite.postRepo = mocks.NewMockRepository(mockCtrl)
+	suite.underTest = post.NewService(suite.postRepo)
 }
 
-func (suite *PostHandlerTestSuite) TestCreate() {
+func (suite *PostServiceTestSuite) TestCreate() {
+	//Arrange
 	t := &post.Post{
-		Creator: "Elizabeth",
+		Creator: "Joel",
 	}
-	suite.postService.EXPECT().CreatePost(gomock.Eq(t)).Return(nil)
+	suite.postRepo.EXPECT().Create(gomock.Any()).Return(nil)
 
-	body, _ := json.Marshal(t)
-	r, _ := http.NewRequest("POST", "/posts", bytes.NewBuffer(body))
+	//Act
+	err := suite.underTest.CreatePost(t)
 
-	w := httptest.NewRecorder()
-	suite.underTest.Create(w, r)
+	//Assert
+	suite.NoError(err, "Shouldn't error")
+	suite.NotNil(t.ID, "should not be null")
+	suite.NotNil(t.Created, "should not be null")
+	suite.NotNil(t.Updated, "should not be null")
 
-	response := w.Result()
-	suite.Equal("201 Created", response.Status)
-
-	defer response.Body.Close()
-	result := new(post.Post)
-	json.NewDecoder(response.Body).Decode(result)
-
-	suite.Equal("Elizabeth", result.Creator)
 }
 
-func (suite *PostHandlerTestSuite) TestFindPostByID() {
+func (suite *PostServiceTestSuite) TestFindPostById() {
 	t := &post.Post{
-		Creator: "Elizabeth",
+		ID:      "test",
+		Creator: "Joel",
 	}
-	suite.postService.EXPECT().FindPostByID("test").Return(t, nil)
+	suite.postRepo.EXPECT().FindByID("test").Return(t, nil)
 
-	vars := map[string]string{
-		"id": "test",
-	}
+	result, err := suite.underTest.FindPostByID("test")
 
-	r, _ := http.NewRequest("GET", "/posts/test", nil)
-	r = mux.SetURLVars(r, vars)
-
-	w := httptest.NewRecorder()
-	suite.underTest.GetByID(w, r)
-
-	response := w.Result()
-	suite.Equal("200 OK", response.Status)
-
-	defer response.Body.Close()
-	result := new(post.Post)
-	json.NewDecoder(response.Body).Decode(result)
-
-	suite.Equal("Elizabeth", result.Creator)
+	suite.NoError(err, "Shouldn't error")
+	suite.Equal(t, result, "should be pushing value returned from repo")
 }
 
-func (suite *PostHandlerTestSuite) TestFindAll() {
+func (suite *PostServiceTestSuite) TestFindAll() {
 	ts := []*post.Post{
-		&post.Post{
+		{
 			ID:      "test1",
-			Creator: "Elizabeth",
+			Creator: "Joel",
 		},
-		&post.Post{
+		{
 			ID:      "test2",
 			Creator: "Other",
 		},
 	}
-	suite.postService.EXPECT().FindAllPosts().Return(ts, nil)
+	suite.postRepo.EXPECT().FindAll().Return(ts, nil)
 
-	r, _ := http.NewRequest("GET", "/posts", nil)
+	result, err := suite.underTest.FindAllPosts()
 
-	w := httptest.NewRecorder()
-	suite.underTest.Get(w, r)
-
-	response := w.Result()
-	suite.Equal("200 OK", response.Status)
-
-	defer response.Body.Close()
-	result := new([]post.Post)
-	json.NewDecoder(response.Body).Decode(result)
-	suite.Len(*result, 2, "Should get two results")
+	suite.NoError(err, "Shouldn't error")
+	suite.Len(result, 2, "Should get two results")
 }

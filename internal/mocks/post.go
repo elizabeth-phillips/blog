@@ -104,3 +104,98 @@ func (mr *MockServiceMockRecorder) DeletePost(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePost", reflect.TypeOf((*MockService)(nil).DeletePost), id)
 }
+
+// MockRepository is a mock of Repository interface
+type MockRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockRepositoryMockRecorder
+}
+
+// MockRepositoryMockRecorder is the mock recorder for MockRepository
+type MockRepositoryMockRecorder struct {
+	mock *MockRepository
+}
+
+// NewMockRepository creates a new mock instance
+func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
+	mock := &MockRepository{ctrl: ctrl}
+	mock.recorder = &MockRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method
+func (m *MockRepository) Create(Post *post.Post) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", Post)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create
+func (mr *MockRepositoryMockRecorder) Create(Post interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockRepository)(nil).Create), Post)
+}
+
+// FindByID mocks base method
+func (m *MockRepository) FindByID(id string) (*post.Post, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", id)
+	ret0, _ := ret[0].(*post.Post)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID
+func (mr *MockRepositoryMockRecorder) FindByID(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockRepository)(nil).FindByID), id)
+}
+
+// FindAll mocks base method
+func (m *MockRepository) FindAll() ([]*post.Post, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAll")
+	ret0, _ := ret[0].([]*post.Post)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAll indicates an expected call of FindAll
+func (mr *MockRepositoryMockRecorder) FindAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockRepository)(nil).FindAll))
+}
+
+// Update mocks base method
+func (m *MockRepository) Update(Post *post.Post) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", Post)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update
+func (mr *MockRepositoryMockRecorder) Update(Post interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockRepository)(nil).Update), Post)
+}
+
+// Delete mocks base method
+func (m *MockRepository) Delete(id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockRepositoryMockRecorder) Delete(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRepository)(nil).Delete), id)
+}
