@@ -3,8 +3,6 @@ package psql
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/lib/pq"
 )
 
 //NewPostgresConnection creates a connection to a Postgres database
