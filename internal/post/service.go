@@ -16,13 +16,13 @@ type Service interface {
 }
 
 type postService struct {
-	dataStore Repository
+	repo Repository
 }
 
 //NewService is a constructor for Service
-func NewService(dataStore Repository) Service {
+func NewService(repo Repository) Service {
 	return &postService{
-		dataStore,
+		repo,
 	}
 }
 
@@ -31,24 +31,24 @@ func (s *postService) CreatePost(post *Post) error {
 	post.Created = time.Now()
 	post.Updated = time.Now()
 
-	return s.dataStore.Create(post)
+	return s.repo.Create(post)
 }
 
 func (s *postService) FindPostByID(id string) (*Post, error) {
-	post, err := s.dataStore.FindByID(id)
+	post, err := s.repo.FindByID(id)
 	return post, err
 }
 
 func (s *postService) FindAllPosts() ([]*Post, error) {
-	posts, err := s.dataStore.FindAll()
+	posts, err := s.repo.FindAll()
 	return posts, err
 }
 
 func (s *postService) UpdatePost(post *Post) error {
 	post.Updated = time.Now()
-	return s.dataStore.Update(post)
+	return s.repo.Update(post)
 }
 
 func (s *postService) DeletePost(id string) error {
-	return s.dataStore.Delete(id)
+	return s.repo.Delete(id)
 }

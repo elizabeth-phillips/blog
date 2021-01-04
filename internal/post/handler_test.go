@@ -84,11 +84,11 @@ func (suite *PostHandlerTestSuite) TestFindPostByID() {
 
 func (suite *PostHandlerTestSuite) TestFindAll() {
 	ts := []*post.Post{
-		&post.Post{
+		{
 			ID:      "test1",
 			Creator: "Elizabeth",
 		},
-		&post.Post{
+		{
 			ID:      "test2",
 			Creator: "Other",
 		},

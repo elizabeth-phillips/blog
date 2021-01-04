@@ -31,7 +31,7 @@ func (suite *PostServiceTestSuite) SetupTest() {
 func (suite *PostServiceTestSuite) TestCreate() {
 	//Arrange
 	t := &post.Post{
-		Creator: "Joel",
+		Creator: "Elizabeth",
 	}
 	suite.postRepo.EXPECT().Create(gomock.Any()).Return(nil)
 
@@ -49,7 +49,7 @@ func (suite *PostServiceTestSuite) TestCreate() {
 func (suite *PostServiceTestSuite) TestFindPostById() {
 	t := &post.Post{
 		ID:      "test",
-		Creator: "Joel",
+		Creator: "Elizabeth",
 	}
 	suite.postRepo.EXPECT().FindByID("test").Return(t, nil)
 
@@ -63,7 +63,7 @@ func (suite *PostServiceTestSuite) TestFindAll() {
 	ts := []*post.Post{
 		{
 			ID:      "test1",
-			Creator: "Joel",
+			Creator: "Elizabeth",
 		},
 		{
 			ID:      "test2",

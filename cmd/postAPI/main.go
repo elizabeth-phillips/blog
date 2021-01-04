@@ -45,15 +45,21 @@ func main() {
 	postService := post.NewService(postRepo)
 	postHandler := post.NewHandler(postService)
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/posts", postHandler.Get).Methods("GET")
-	router.HandleFunc("/posts/{id}", postHandler.GetByID).Methods("GET")
-	router.HandleFunc("/posts", postHandler.Create).Methods("POST")
+	router := mux.NewRouter()
+	rootRouter := router.PathPrefix("/api").Subrouter()
+	rootRouter.HandleFunc("/", rootHandler).Methods("GET")
+
+	postRouter := rootRouter.PathPrefix("/posts").Subrouter()
+	postRouter.HandleFunc("/", postHandler.Create).Methods("POST")
+	postRouter.HandleFunc("/", postHandler.Get).Methods("GET")
+	postRouter.HandleFunc("/{id}", postHandler.GetByID).Methods("GET")
+	postRouter.HandleFunc("/{id}", postHandler.Update).Methods("PUT", "PATCH")
+	postRouter.HandleFunc("/{id}", postHandler.Delete).Methods("DELETE")
 
 	errs := make(chan error, 2)
 	go func() {
-		logrus.Info("Listening server mode on port :3001")
-		errs <- http.ListenAndServe(":3001", nil)
+		logrus.Info("Listening server mode on port: 3001")
+		errs <- http.ListenAndServe(":3001", accessControl(router))
 	}()
 	go func() {
 		c := make(chan os.Signal, 1)
@@ -74,10 +80,15 @@ func postgresConnection(database string) (db *sql.DB, err error) {
 	return
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "welcome to %s from OM!", r.URL.Path)
+}
+
 func accessControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
 
 		if r.Method == "OPTIONS" {
