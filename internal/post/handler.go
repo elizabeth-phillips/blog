@@ -91,10 +91,12 @@ func (h *postHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *postHandler) Update(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	id := vars["id"]
 	var post Post
 	decoder := json.NewDecoder(r.Body)
 	_ = decoder.Decode(&post)
+	post.ID = id
 	_ = h.postService.UpdatePost(&post)
 
 	response, _ := json.Marshal(post)

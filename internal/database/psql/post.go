@@ -89,16 +89,17 @@ func (t postRepository) FindAll() (allPosts []*post.Post, err error) {
 }
 
 func (t postRepository) Update(tool *post.Post) (err error) {
-	_, err = t.FindByID(tool.ID) //Checks to see if ID is provided/valid
+	found, err := t.FindByID(tool.ID) //Checks to see if ID is provided/valid
 	if err != nil {
 		return fmt.Errorf("update: id not found")
 	}
 	sqlStatement := `UPDATE post
-					SET creator = $2, title = $3, content = $4, updated_at = $5
+					SET creator = $2, title = $3, content = $4, updated = $5
 					WHERE id = $1;`
-	result, err := t.db.Exec(sqlStatement, tool.ID, tool.Creator, tool.Title, tool.Content, time.Now())
+	result, err := t.db.Exec(sqlStatement, found.ID, tool.Creator, tool.Title, tool.Content, time.Now())
 	if err == nil {
-		logrus.Info("%v row affected\n", result)
+		numRows, _ := result.RowsAffected()
+		logrus.Infof("%v row(s) affected\n", numRows)
 	} else {
 		logrus.Error("DB: ", err)
 	}

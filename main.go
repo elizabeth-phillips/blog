@@ -11,11 +11,11 @@ import (
 )
 
 func main() {
-	host := os.Getenv("BLOG_HOST")
-	port := os.Getenv("PORT")
-	user := os.Getenv("BLOG_USERNAME")
-	password := os.Getenv("BLOG_PASSWORD")
-	dbname := os.Getenv("BLOG_NAME")
+	host := os.Getenv("BLOG_HOST")         // 127.0.0.1
+	port := os.Getenv("PORT")              // 5432
+	user := os.Getenv("BLOG_USERNAME")     // elizabeth
+	password := os.Getenv("BLOG_PASSWORD") // blog
+	dbname := os.Getenv("BLOG_NAME")       // blog
 
 	connection := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, "disable")
 	db, err := psql.NewPostgresConnection(connection)
@@ -35,7 +35,6 @@ func main() {
 	for _, tool := range allTools {
 		fmt.Println(tool)
 	}
-	fmt.Println(allTools)
 }
 
 func postgresConnection(database string) (db *sql.DB, err error) {
